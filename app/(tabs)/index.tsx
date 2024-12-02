@@ -1,74 +1,110 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, Image, ImageBackground, TouchableOpacity } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+//tentativas
+const gerarDado = (): 1 | 2 | 3 | 4 | 5 | 6 => {
+  return Math.floor(Math.random() * 6) + 1 as 1 | 2 | 3 | 4 | 5 | 6; 
+};
 
-export default function HomeScreen() {
+const App = () => {
+  const [dadoJogador1, setDadoJogador1] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
+  const [dadoJogador2, setDadoJogador2] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
+  const [vencedor, setVencedor] = useState<string>(''); //Decidi o vencedor 😎
+
+  // Mapeamento das imagens dos dados
+  const dadosImagens: { [key in 1 | 2 | 3 | 4 | 5 | 6]: any } = {
+    1: require('../../assets/images/dice1.png'),
+    2: require('../../assets/images/dice2.png'),
+    3: require('../../assets/images/dice3.png'),
+    4: require('../../assets/images/dice4.png'),
+    5: require('../../assets/images/dice5.png'),
+    6: require('../../assets/images/dice6.png'),
+  };
+
+  // Função do botão "Jogar os Dados"
+  const jogarDados = () => {
+    const dado1 = gerarDado();
+    const dado2 = gerarDado();
+    setDadoJogador1(dado1);
+    setDadoJogador2(dado2);
+
+    if (dado1 > dado2) {
+      setVencedor('Jogador 1');
+    } else if (dado2 > dado1) {
+      setVencedor('Jogador 2');
+    } else {
+      setVencedor('Empate');
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ImageBackground
+      source={require('../../assets/images/wallpaper.jpg')}  
+      style={styles.container}
+    >
+      <Text style={styles.title}>Jogo de Dados</Text>
+
+      <Text style={styles.subTitle}>Vencedor 😎: {vencedor}</Text>
+
+      <View style={styles.dadosContainer}>
+        <Image source={dadosImagens[dadoJogador1]} style={styles.dado} />
+        <Image source={dadosImagens[dadoJogador2]} style={styles.dado} />
+      </View>
+
+      
+      <TouchableOpacity 
+        style={styles.jogarButton} 
+        activeOpacity={0.6} // Efeito do botao
+        onPress={jogarDados}
+      >
+        <Text style={styles.buttonText}>Jogar os Dados</Text>
+      </TouchableOpacity>
+    </ImageBackground>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 50, 
+    fontWeight: '900', 
+    color: 'white',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  subTitle: {
+    fontSize: 20,
+    marginVertical: 20,
+    color: 'white',
+  },
+  dadosContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '60%',
+    marginBottom: 20,
+  },
+  dado: {
+    width: 100,
+    height: 100,
+  },
+  jogarButton: {
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    backgroundColor: 'rgba(34, 193, 34, 0.7)', 
+    borderRadius: 30,
+    borderWidth: 4,
+    borderColor: 'rgba(34, 193, 34, 0.7)',
+    marginTop: 30,
+    
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
+
+export default App;
